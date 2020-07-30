@@ -40,10 +40,10 @@
     <text class="iconfont icon-gouwuche"></text>
     <text>购物车</text>
   </navigator>
-  <view class="bottom-item btn-cart">
+  <view class="bottom-item btn-cart" bindtap="handleAddCart">
     加入购物车
   </view>
-  <view class="bottom-item btn-buy">
+  <view class="bottom-item btn-buy" bindtap="handleBuy">
     立即购买
   </view>
 </view>
