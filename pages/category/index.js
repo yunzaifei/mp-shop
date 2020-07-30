@@ -1,66 +1,67 @@
 // pages/category/index.js
+import { request } from '../../service/index';
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    leftList: [],
+    rightList: [],
+    activeIndex: 0,
+    scrollTop: 0,
   },
+
+  cateList: [],
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    const storageData = wx.getStorageSync('category');
+    if (storageData) {
+      if (Date.now() - storageData.time > 30000) {
+        this.getCategory();
+      } else {
+        this.cateList = storageData.data;
+        const leftList = this.cateList.map(v => v.cat_name);
+        const rightList = this.cateList[0].children;
+        this.setData({
+          leftList,
+          rightList,
+        });
+      }
+    } else {
+      this.getCategory();
+    }
   },
-
   /**
-   * 生命周期函数--监听页面初次渲染完成
+   * 获取分类数据
    */
-  onReady: function () {
-
+  getCategory() {
+    request({ url: '/categories' })
+      .then(res => {
+        this.cateList = res;
+        wx.setStorageSync('category', { time: Date.now(), data: this.cateList });
+        const leftList = this.cateList.map(v => v.cat_name);
+        const rightList = this.cateList[0].children;
+        this.setData({
+          leftList,
+          rightList,
+        });
+      })
   },
-
   /**
-   * 生命周期函数--监听页面显示
+   * 左侧菜单点击事件
    */
-  onShow: function () {
-
+  handleItemTap(e) {
+    const { index } = e.target.dataset;
+    const rightList = this.cateList[index].children;
+    this.setData({ 
+      activeIndex: index,
+      scrollTop: 0,
+      rightList,
+    });
   },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
 })

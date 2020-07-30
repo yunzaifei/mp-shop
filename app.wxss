@@ -5,3 +5,7 @@ page {
   /* 主题色 */
   --themeColor: #eb4450;
 }
+
+image {
+  width: 100%;
+}
