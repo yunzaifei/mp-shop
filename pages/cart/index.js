@@ -36,7 +36,6 @@ Page({
       success: (result) => {
         const scopeAddress = result.authSetting["scope.address"];
         const successAddress = (res) => {
-          console.log(res);
           res.addressAll = res.provinceName+res.cityName+res.countyName+res.detailInfo;
           wx.setStorageSync('address', res);
         };

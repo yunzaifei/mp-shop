@@ -1,12 +1,18 @@
-// pages/pay/index.js
+// pages/cart/index.js
+import { request } from '../../service/index';
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    address: {},
+    cartList: [],
+    totalPrice: 0,
+    totalNum: 0,
   },
+  header: {},
 
   /**
    * 生命周期函数--监听页面加载
@@ -14,53 +20,102 @@ Page({
   onLoad: function (options) {
 
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    const address = wx.getStorageSync('address');
+    let cartList = wx.getStorageSync('cart') || [];
+    cartList = cartList.filter(v => v.checked);
+    let totalPrice = 0;
+    let totalNum = 0;
+    cartList.forEach(v => {
+      totalPrice += v.num * v.goods_price;
+      totalNum += v.num;
+    });
+    this.setData({ 
+      address,
+      cartList,
+      totalPrice,
+      totalNum,
+    });
   },
-
   /**
-   * 生命周期函数--监听页面隐藏
+   * 支付按钮事件
    */
-  onHide: function () {
-
+  handleOrderPay() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.navigateTo({
+        url: '/pages/auth/index',
+      });
+    } else {
+      // console.log('token', token);
+      const { address, totalPrice, cartList } = this.data;
+      this.header = { Authorization: token };
+      request({
+        url: '/my/orders/create',
+        method: 'post',
+        header: this.header,
+        data: {
+          order_price: totalPrice,
+          consignee_addr: address.addresAll,
+          goods: cartList.map(v => ({
+            goods_id: v.goods_id,
+            goods_number: v.num,
+            goods_price: v.goods_price,
+          })),
+        }
+      }).then(this.createPayParams);
+    }
   },
-
   /**
-   * 生命周期函数--监听页面卸载
+   * 获取支付参数
+   * @param {*} res 
    */
-  onUnload: function () {
-
+  createPayParams(res) {
+    const { order_number } = res;
+    request({
+      url: '/my/orders/req_unifiedorder',
+      method: 'post',
+      header: this.header,
+      data: { order_number },
+    }).then(result => {
+      result.order_number = order_number;
+      this.wxRequestPay(result);
+    });
   },
-
   /**
-   * 页面相关事件处理函数--监听用户下拉动作
+   * 微信支付请求
+   * @param {*} res 
    */
-  onPullDownRefresh: function () {
-
+  wxRequestPay(res) {
+    const { pay: { nonceStr, package, paySign, timeStamp }, order_number } = res;
+    wx.requestPayment({
+      nonceStr,
+      package,
+      paySign,
+      timeStamp,
+    }).then(result => {
+      this.checkOrder(order_number);
+    });
   },
-
   /**
-   * 页面上拉触底事件的处理函数
+   * 查看订单支付状态
+   * @param {*} order_number 订单编号
    */
-  onReachBottom: function () {
-
+  checkOrder(order_number) {
+    request({
+      url: '/my/orders/chkOrder',
+      method: 'post',
+      header: this.header,
+      data: { order_number },
+    }).then(res => {
+      wx.showToast({  title: '支付成功' });
+      wx.navigateTo({  url: '/pages/order/index' });
+      let cart = wx.getStorageSync('cart');
+      cart = cart.filter(v => !v.checked);
+      wx.setStorageSync('cart', cart);
+    });
   },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
 })
