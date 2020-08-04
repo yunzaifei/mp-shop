@@ -1,2 +1,56 @@
 <!--pages/cart/index.wxml-->
-<text>pages/cart/index.wxml</text>
+<view class="address-row">
+  <view class="address-btn" wx:if="{{!address.userName}}">
+    <button bindtap="handleChooseAddress" type="primary" plain>获取收货地址</button>
+  </view>
+  <view wx:else class="user-info-row">
+    <view class="user-info">
+      <view>收货人：{{address.userName}}</view>
+      <view>{{address.addressAll}}</view>
+    </view>
+    <view class="user-phone">{{address.telNumber}}</view>
+  </view>
+</view>
+<view class="cart-container">
+  <view class="cart-title">购物车</view>
+  <view class="cart-content">
+    <view class="cart-item" wx:for="{{cartList}}" wx:key="goodes_id">
+      <view class="cart-ckb-wrap">
+        <checkbox-group>
+          <checkbox></checkbox>
+        </checkbox-group>
+      </view>
+      <navigator class="cart-img-wrap">
+        <image mode="widthFix" src="{{item.pics[0].pics_sma}}"></image>
+      </navigator>
+      <view class="cart-info-wrap">
+        <view class="goods-name">{{item.goods_name}}</view>
+        <view  class="goods-price-wrap">
+          <view class="goods-price">￥{{item.goods_price}}</view>
+          <view  class="cart-num-container">
+            <view class="num-edit">-</view>
+            <view class="goods-num">{{item.num}}</view>
+            <view class="num-edit">+</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+<view class="footer-container">
+  <view class="all-ckb-wrap">
+    <checkbox-group>
+      <checkbox>全选</checkbox>
+    </checkbox-group>
+  </view>
+  <view class="total-price-wrap">
+    <view class="total-price">
+      <text>合计：</text>
+      <text class="total-price-text">￥999</text>
+    </view>
+    <view>包含运费</view>
+  </view>
+  <view class="order-pay-wrap">
+    结算
+  </view>
+</view>
