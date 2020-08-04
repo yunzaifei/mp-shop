@@ -5,7 +5,7 @@
 .user-info-row {
   display: flex;
   padding: 20rpx;
-  font-size: 28rpx;
+  font-size: 32rpx;
 }
 .user-info {
   flex: 5;
@@ -69,6 +69,7 @@
 }
 .cart-num-container {
   display: flex;
+  color: #666;
 }
 .num-edit {
   width: 55rpx;
@@ -78,6 +79,12 @@
   align-items: center;
   border: 1rpx solid #ccc;
 }
+.goods-num {
+  padding: 0 10rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .footer-container {
   position: fixed;
   left: 0;
@@ -86,6 +93,7 @@
   height: 90rpx;
   display: flex;
   font-size: 32rpx;
+  background-color: #fff;
 }
 .all-ckb-wrap {
   flex: 1;

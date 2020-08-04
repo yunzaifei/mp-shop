@@ -13,11 +13,11 @@
 </view>
 <view class="cart-container">
   <view class="cart-title">购物车</view>
-  <view class="cart-content">
+  <view class="cart-content"  wx:if="{{cartList.length > 0}}">
     <view class="cart-item" wx:for="{{cartList}}" wx:key="goodes_id">
       <view class="cart-ckb-wrap">
-        <checkbox-group>
-          <checkbox></checkbox>
+        <checkbox-group bindchange="handleItemChange" data-index="{{index}}">
+          <checkbox checked="{{item.checked}}"></checkbox>
         </checkbox-group>
       </view>
       <navigator class="cart-img-wrap">
@@ -28,29 +28,32 @@
         <view  class="goods-price-wrap">
           <view class="goods-price">￥{{item.goods_price}}</view>
           <view  class="cart-num-container">
-            <view class="num-edit">-</view>
+            <view class="num-edit" bindtap="handleNumEdit" data-index="{{index}}" data-operation="{{-1}}">-</view>
             <view class="goods-num">{{item.num}}</view>
-            <view class="num-edit">+</view>
+            <view class="num-edit" bindtap="handleNumEdit" data-index="{{index}}" data-operation="{{1}}">+</view>
           </view>
         </view>
       </view>
     </view>
   </view>
+  <navigator wx:else url="/pages/category/index" open-type="switchTab">
+    <image src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=3334466282,826560232&fm=26&gp=0.jpg"></image>
+  </navigator>
 </view>
 <view class="footer-container">
   <view class="all-ckb-wrap">
-    <checkbox-group>
-      <checkbox>全选</checkbox>
+    <checkbox-group bindchange="handleAllChange">
+      <checkbox checked="{{allChecked}}">全选</checkbox>
     </checkbox-group>
   </view>
   <view class="total-price-wrap">
     <view class="total-price">
       <text>合计：</text>
-      <text class="total-price-text">￥999</text>
+      <text class="total-price-text">￥{{totalPrice}}</text>
     </view>
     <view>包含运费</view>
   </view>
-  <view class="order-pay-wrap">
-    结算
+  <view class="order-pay-wrap" bindtap="handlePay">
+    结算({{totalNum}})
   </view>
 </view>
