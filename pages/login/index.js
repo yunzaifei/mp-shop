@@ -42,25 +42,15 @@ Page({
   onUnload: function () {
 
   },
-
   /**
-   * 页面相关事件处理函数--监听用户下拉动作
+   * 获取微信用户信息
+   * @param {*} e 
    */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  handleGetUserInfo(e) {
+    const { userInfo } = e.detail;
+    wx.setStorageSync('userInfo', userInfo);
+    wx.navigateBack({
+      delta: 1,
+    });
   }
 })

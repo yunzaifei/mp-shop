@@ -90,12 +90,9 @@ Page({
    * @param {*} res 
    */
   wxRequestPay(res) {
-    const { pay: { nonceStr, package, paySign, timeStamp }, order_number } = res;
+    const { pay, order_number } = res;
     wx.requestPayment({
-      nonceStr,
-      package,
-      paySign,
-      timeStamp,
+      ...pay,
     }).then(result => {
       this.checkOrder(order_number);
     });
