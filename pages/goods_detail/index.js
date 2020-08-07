@@ -6,17 +6,22 @@ Page({
    * 页面的初始数据
    */
   data: {
-    goodsObj: {}
+    goodsObj: {},
+    isCollect: false,
   },
 
   goodsInfo: {},
 
   /**
-   * 生命周期函数--监听页面加载
+   * 生命周期函数--监听页面显示
    */
-  onLoad: function (options) {
-    const { goods_id } = options;
+  onShow: function () {
+    let pages = getCurrentPages();
+    const { goods_id } = pages[pages.length - 1].options;
     this.getGoodDetail(goods_id);
+    let collect = wx.getStorageSync('collect') || [];
+    let isCollect = collect.some(v => v.goods_id == goods_id);
+    this.setData({ isCollect });
   },
   /**
    * 获取商品详情
@@ -69,5 +74,30 @@ Page({
       icon: 'success',
       mask: true,
     });
+  },
+  /**
+   * 收藏点击事件
+   */
+  handleCollect() {
+    const collect = wx.getStorageSync('collect') || [];
+    const { isCollect, goodsObj } = this.data;
+    if (isCollect) {
+      const index = collect.findIndex(v => v.goods_id === this.goodsInfo.goods_id);
+      collect.splice(index, 1);
+      wx.showToast({
+        title: '取消收藏',
+        icon: 'none',
+        mask: true,
+      });
+    } else {
+      collect.push(this.goodsInfo);
+      wx.showToast({
+        title: '收藏成功',
+        icon: 'none',
+        mask: true,
+      });
+    }
+    this.setData({ isCollect: !isCollect });
+    wx.setStorageSync('collect', collect);
   }
 })
