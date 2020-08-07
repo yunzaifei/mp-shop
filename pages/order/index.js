@@ -30,7 +30,7 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function (options) {
+  onShow: function () {
     let pages = getCurrentPages();
     const { type } = pages[pages.length - 1].options;
     console.log(type);
