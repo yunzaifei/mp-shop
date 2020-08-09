@@ -22,7 +22,10 @@ Page({
     request({url: '/home/swiperdata'})
     .then(res => {
       this.setData({
-        swiperList: res,
+        swiperList: res.map(v => ({
+          ...v,
+          navigator_url: v.navigator_url.replace('main', 'index'),
+        })),
       });
     });
   },
@@ -33,7 +36,10 @@ Page({
     request({url: '/home/catitems'})
     .then(res => {
       this.setData({
-        catesList: res,
+        catesList: res.map(v => ({
+          ...v,
+          navigator_url: v.navigator_url ? v.navigator_url.replace('main', 'index') : '',
+        })),
       });
     });
   },
