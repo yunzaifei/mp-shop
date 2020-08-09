@@ -5,21 +5,17 @@ Page({
    * 页面的初始数据
    */
   data: {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+    tabs: [{
+      id: 0,
+      name: '体验问题',
+      isActive: true,
+    },{
+      id: 1,
+      name: '商品/商家投诉',
+      isActive: false,
+    }],
+    chooseImgs: [],
+    textVal: '',
   },
 
   /**
@@ -28,39 +24,75 @@ Page({
   onShow: function () {
 
   },
-
   /**
-   * 生命周期函数--监听页面隐藏
+   * 标题切换
+   * @param {*} e 
    */
-  onHide: function () {
-
+  handleTabsItemChange(e) {
+    const {index} = e.detail;
+    let { tabs } = this.data;
+    tabs.forEach((v, i) => {
+      v.isActive = i===index;
+    });
+    this.setData({ tabs });
   },
-
   /**
-   * 生命周期函数--监听页面卸载
+   * 选择图片事件
    */
-  onUnload: function () {
-
+  handleChooseImg(){
+    wx.chooseImage({
+      count: 9,
+      success: (result) => {
+        const { tempFilePaths } = result;
+        const { chooseImgs } = this.data;
+        this.setData({
+          chooseImgs: [...chooseImgs, ...tempFilePaths],
+        });
+      }
+    })
   },
-
   /**
-   * 页面相关事件处理函数--监听用户下拉动作
+   * 删除图片
+   * @param {*} e 
    */
-  onPullDownRefresh: function () {
-
+  handleRemoveImg(e) {
+    console.log(e);
+    const { index } = e.currentTarget.dataset;
+    const { chooseImgs } = this.data;
+    chooseImgs.splice(index, 1);
+    this.setData({ chooseImgs });
   },
-
   /**
-   * 页面上拉触底事件的处理函数
+   * 文本输入
    */
-  onReachBottom: function () {
-
+  handleText(e) {
+    this.setData({ textVal: e.detail.value.trim() });
   },
-
   /**
-   * 用户点击右上角分享
+   * 提交
    */
-  onShareAppMessage: function () {
-
+  handleSubmit() {
+    const { textVal, chooseImgs } = this.data;
+    if(textVal) {
+      chooseImgs.forEach(v => {
+        wx.uploadFile({
+          filePath: v,
+          name: 'file',
+          url: 'https://api.superbed.cn/upload',
+          success: (result) => {
+            console.log(result);
+          }
+        });
+      });
+      this.setData({ textVal: '', chooseImgs: [] });
+      wx.navigateBack({
+        delta: 1,
+      });
+    } else {
+      wx.showToast({
+        title: '反馈意见不能为空！',
+        icon: 'none',
+      });
+    }
   }
-})
+}) 
